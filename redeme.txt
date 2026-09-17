@@ -1,0 +1,7 @@
+Resumo do projeto
+
+O projeto Workat possui um backend desenvolvido em Java 17 com Spring Boot 3.2.5 e gerenciado pelo Maven. A API utiliza Spring Web, Spring Data JPA com Hibernate, Spring Security e autenticação por JWT. Os dados são armazenados em um banco PostgreSQL.
+
+O frontend foi desenvolvido com React 19, TypeScript, Vite e TanStack Router/Start. A interface utiliza Tailwind CSS, componentes Radix UI, Lucide React e Recharts para os gráficos e dashboards.
+
+Entre as funcionalidades estão autenticação de usuários, dashboard, canvas de trabalho, quadro Kanban e visualização de projetos e atividades.
