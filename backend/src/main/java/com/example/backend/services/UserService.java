@@ -57,21 +57,14 @@ public class UserService {
      * @return O objeto User autenticado.
      * @throws RuntimeException se as credenciais forem inválidas.
      */
-    public User authenticateUser(String username, String password) {
-        Optional<User> userOptional = userRepository.findByUsername(username);
+    public User authenticateUser(String email, String password) {
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("Credenciais inválidas.");
-        }
-
-        User user = userOptional.get();
-
-        // 1. Verificação do Hash
-        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            throw new RuntimeException("Credenciais inválidas.");
-        }
-
-        // Se o hash bater, o usuário está autenticado.
-        return user;
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+        throw new RuntimeException("Senha incorreta");
     }
+
+    return user;
+}
 }

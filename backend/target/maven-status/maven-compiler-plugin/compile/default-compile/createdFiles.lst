@@ -5,6 +5,7 @@ com\example\backend\services\ProjectService.class
 com\example\backend\models\ActivityCommits.class
 com\example\backend\dto\LoginRequest.class
 com\example\backend\BackendApplication.class
+com\example\backend\config\DataLoader.class
 com\example\backend\models\Project.class
 com\example\backend\controllers\AuthController.class
 com\example\backend\models\Role.class

@@ -1,14 +1,10 @@
 package com.example.backend.models;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "app_user") // Renomeando a tabela para evitar conflito com palavras reservadas
+@Table(name = "app_user")
 public class User {
 
     @Id
@@ -18,7 +14,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(name = "password_hash", nullable = false) // Renomeado para indicar que é um hash
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
     @Column(nullable = false)
@@ -29,13 +25,11 @@ public class User {
     private Role role;
 
     @Column(nullable = false)
-    private String userType; // ARTIST or COMPANY
+    private String userType;
 
     private LocalDateTime createdAt;
 
-    // Construtores
     public User() {
-        // Construtor padrão JPA
     }
 
     // Getters e Setters
@@ -62,6 +56,16 @@ public class User {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
+
+    // --- Métodos Auxiliares para Compatibilidade ---
+    public String getPassword() {
+        return passwordHash;
+    }
+
+    public void setPassword(String password) {
+        this.passwordHash = password;
+    }
+    // ----------------------------------------------
 
     public String getEmail() {
         return email;
