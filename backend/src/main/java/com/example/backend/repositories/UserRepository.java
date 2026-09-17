@@ -14,4 +14,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * JPA irá gerar a implementação do findByUsername.
      */
     Optional<User> findByUsername(String username);
+
+    /**
+     * Método para encontrar um usuário pelo e-mail.
+     * JPA irá gerar a implementação do findByEmail.
+     */
+    Optional<User> findByEmail(String email);
 }

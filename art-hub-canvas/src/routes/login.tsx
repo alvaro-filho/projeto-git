@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/lib/AuthContext"; // Importa o hook de autenticação
+import { useNavigate } from "@tanstack/react-router"; // Importa navegação para redirecionar
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -29,6 +31,43 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const [mode, setMode] = useState("entrar");
   const [profile, setProfile] = useState<"artista" | "empresa">("artista");
+  const { login } = useAuth(); // Importa a função de login
+  const navigate = useNavigate(); // Importa a função de navegação
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    // -----------------------------------------------------------
+    // SIMULAÇÃO DE CHAMADA DE API:
+    // Em produção, aqui você faria:
+    // 1. Chamar POST /api/v1/auth/login com email e senha.
+    // 2. Receber o { token, user } do backend.
+    // 3. Chamar login(token, user) e navegar.
+    // -----------------------------------------------------------
+    
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simula latência de rede
+
+    // Simulação de sucesso para qualquer login
+    const mockToken = "fake-jwt-token-12345";
+    const mockUser = {
+        id: 1,
+        name: "Nome do Usuário",
+        email: "user@example.com",
+        role: "ARTIST", // Deve ser passado pelo backend
+    };
+    
+    try {
+      login(mockToken, mockUser); // Atualiza o contexto e o localStorage
+      navigate({ to: "/dashboard" }); // Redireciona
+    } catch (error) {
+      console.error("Falha ao logar:", error);
+      // Exibir mensagem de erro na UI
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background p-4">

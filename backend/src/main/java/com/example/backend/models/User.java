@@ -18,8 +18,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false)
-    private String password;
+    @Column(name = "password_hash", nullable = false) // Renomeado para indicar que é um hash
+    private String passwordHash;
 
     @Column(nullable = false)
     private String email;
@@ -28,16 +28,17 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
+    private String userType; // ARTIST or COMPANY
+
     private LocalDateTime createdAt;
 
-    // Getters e Setters (pular para brevidade)
-    // ...
-
+    // Construtores
     public User() {
         // Construtor padrão JPA
     }
 
-    // Getters e Setters de exemplo (devem ser adicionados manualmente ou com Lombok)
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -54,12 +55,12 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public String getEmail() {
@@ -76,6 +77,14 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 
     public LocalDateTime getCreatedAt() {
