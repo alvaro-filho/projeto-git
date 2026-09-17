@@ -20,21 +20,62 @@ Este repositório contém a estrutura completa da aplicação WorkAt, dividida e
 
 ---
 
-## ⚙️ Pré-requisitos e Instalações na Máquina
+# 🚀 WorkAt - Guia de Execução do Projeto
 
-Antes de clonar e iniciar o projeto, certifique-se de ter as seguintes ferramentas instaladas em seu computador:
-
-* **Java JDK 17** (ou superior) - Para rodar o backend.
-* **Maven** - Gerenciador de dependências do Java.
-* **Node.js (versão LTS recomendada)** e **npm** - Para rodar o frontend.
-* **PostgreSQL** - Sistema de gerenciamento de banco de dados relacional.
+Este repositório contém a estrutura completa da aplicação WorkAt, dividida nas pastas `/backend` (Java 17 / Spring Boot) e `/frontend` (Node.js / React / Vite). Siga as instruções abaixo para preparar o ambiente e rodar o projeto localmente.
 
 ---
 
-## 🚀 Como Executar o Projeto
+## 🛠️ 1. Pré-requisitos da Máquina
 
-### 1. Clonar o Repositório
-Abra o seu terminal e clone o repositório para a sua máquina:
-```bash
-git clone <url-do-seu-repositorio>
-cd <pasta-do-projeto>
+Antes de iniciar, garanta que possui as seguintes ferramentas instaladas e configuradas no seu sistema operacional:
+
+* **Java 17 (JDK)** e **Apache Maven**
+* **Node.js** (versão LTS) e **npm**
+* **PostgreSQL** (rodando localmente na porta padrão `5432`)
+
+---
+
+## 🗄️ 2. Configuração do Banco de Dados (PostgreSQL)
+
+1. Abra o seu gerenciador do PostgreSQL (ex: pgAdmin ou DBeaver) e crie um banco de dados vazio chamado **`workat_db`**.
+2. Abra o arquivo de configuração localizado em:
+   `backend/src/main/resources/application.properties`
+3. Atualize o usuário e a senha com as credenciais da sua instalação local:
+   ```properties
+   spring.datasource.url=jdbc:postgresql://localhost:5432/workat_db
+   spring.datasource.username=postgres
+   spring.datasource.password=SUA_SENHA_AQUI
+   ```
+
+---
+
+## ⚙️ 3. Executando o Backend (Java / Spring Boot)
+
+1. Abra um terminal e acesse a pasta do backend:
+   ```bash
+   cd backend
+   ```
+2. Instale as dependências e inicie a aplicação:
+   ```bash
+   mvn spring-boot:run
+   ```
+3. A API estará rodando (geralmente na porta `8080`).
+
+---
+
+## 💻 4. Executando o Frontend (Node / React)
+
+1. Abra um novo terminal e acesse a pasta do frontend:
+   ```bash
+   cd frontend
+   ```
+2. Inicialize a instalação das dependências do projeto:
+   ```bash
+   npm install
+   ```
+3. Rode o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+4. O frontend estará disponível no seu navegador (geralmente em `http://localhost:5173`).
