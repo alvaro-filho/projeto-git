@@ -1,3 +1,4 @@
+import { AuthProvider } from '@/lib/AuthContext'; // Ajuste o caminho caso o seu AuthContext esteja em outra pasta
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,

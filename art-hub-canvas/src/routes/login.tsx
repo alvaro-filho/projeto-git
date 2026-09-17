@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Building2, Chrome, Palette, Sparkles, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/lib/AuthContext"; // Importa o hook de autenticação
-import { useNavigate } from "@tanstack/react-router"; // Importa navegação para redirecionar
+import { useAuth } from "@/lib/AuthContext";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -31,39 +30,40 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const [mode, setMode] = useState("entrar");
   const [profile, setProfile] = useState<"artista" | "empresa">("artista");
-  const { login } = useAuth(); // Importa a função de login
-  const navigate = useNavigate(); // Importa a função de navegação
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
 
-    // -----------------------------------------------------------
-    // SIMULAÇÃO DE CHAMADA DE API:
-    // Em produção, aqui você faria:
-    // 1. Chamar POST /api/v1/auth/login com email e senha.
-    // 2. Receber o { token, user } do backend.
-    // 3. Chamar login(token, user) e navegar.
-    // -----------------------------------------------------------
-    
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simula latência de rede
-
-    // Simulação de sucesso para qualquer login
-    const mockToken = "fake-jwt-token-12345";
-    const mockUser = {
-        id: 1,
-        name: "Nome do Usuário",
-        email: "user@example.com",
-        role: "ARTIST", // Deve ser passado pelo backend
-    };
-    
     try {
-      login(mockToken, mockUser); // Atualiza o contexto e o localStorage
-      navigate({ to: "/dashboard" }); // Redireciona
+      // Requisição real HTTP para o Backend Spring Boot (Porta 8080)
+      const response = await fetch("http://localhost:8080/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro na requisição: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Atualiza o contexto global de autenticação com os dados reais
+      login(data.token, data.user);
+      
+      // Redireciona para a página principal do dashboard
+      navigate({ to: "/dashboard" });
     } catch (error) {
-      console.error("Falha ao logar:", error);
-      // Exibir mensagem de erro na UI
+      console.error("Falha na autenticação com o servidor:", error);
     } finally {
       setIsLoading(false);
     }
@@ -110,17 +110,41 @@ function LoginPage() {
           </div>
         </div>
 
-        <form className="mt-5 space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="mt-5 space-y-4" onSubmit={handleLogin}>
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
-            <Input id="email" type="email" placeholder="voce@atelie.com" className="bg-white/5" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="voce@atelie.com"
+              className="bg-white/5"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="senha">Senha</Label>
-            <Input id="senha" type="password" placeholder="••••••••" className="bg-white/5" />
+            <Input
+              id="senha"
+              type="password"
+              placeholder="••••••••"
+              className="bg-white/5"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
-          <Button asChild className="gradient-primary w-full text-primary-foreground">
-            <Link to="/dashboard">{mode === "entrar" ? "Entrar no ateliê" : "Criar cadastro"}</Link>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="gradient-primary w-full text-primary-foreground"
+          >
+            {isLoading
+              ? "Autenticando..."
+              : mode === "entrar"
+              ? "Entrar no ateliê"
+              : "Criar cadastro"}
           </Button>
         </form>
 
