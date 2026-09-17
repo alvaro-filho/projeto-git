@@ -5,3 +5,36 @@ O projeto Workat possui um backend desenvolvido em Java 17 com Spring Boot 3.2.5
 O frontend foi desenvolvido com React 19, TypeScript, Vite e TanStack Router/Start. A interface utiliza Tailwind CSS, componentes Radix UI, Lucide React e Recharts para os gráficos e dashboards.
 
 Entre as funcionalidades estão autenticação de usuários, dashboard, canvas de trabalho, quadro Kanban e visualização de projetos e atividades.
+
+
+
+# WorkAt - Backend
+
+Este é o repositório do backend da aplicação, desenvolvido com **Java 17** e **Spring Boot**.
+
+---
+
+# WorkAt - Sistema Fullstack
+
+Este repositório contém a estrutura completa da aplicação WorkAt, dividida em **Backend** (Java/Spring Boot) e **Frontend**.
+
+---
+
+## ⚙️ Pré-requisitos e Instalações na Máquina
+
+Antes de clonar e iniciar o projeto, certifique-se de ter as seguintes ferramentas instaladas em seu computador:
+
+* **Java JDK 17** (ou superior) - Para rodar o backend.
+* **Maven** - Gerenciador de dependências do Java.
+* **Node.js (versão LTS recomendada)** e **npm** - Para rodar o frontend.
+* **PostgreSQL** - Sistema de gerenciamento de banco de dados relacional.
+
+---
+
+## 🚀 Como Executar o Projeto
+
+### 1. Clonar o Repositório
+Abra o seu terminal e clone o repositório para a sua máquina:
+```bash
+git clone <url-do-seu-repositorio>
+cd <pasta-do-projeto>
