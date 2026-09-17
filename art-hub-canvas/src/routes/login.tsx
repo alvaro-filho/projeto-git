@@ -43,7 +43,7 @@ function LoginPage() {
 
     try {
       // Requisição real HTTP para o Backend Spring Boot (Porta 8080)
-      const response = await fetch("http://localhost:8080/auth/login", {
+      const response = await fetch("http://localhost:8080/api/v1/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
