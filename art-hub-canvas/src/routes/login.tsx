@@ -42,28 +42,18 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Requisição real HTTP para o Backend Spring Boot (Porta 8080)
-      const response = await fetch("http://localhost:8080/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erro na requisição: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      // Atualiza o contexto global de autenticação com os dados reais
-      login(data.token, data.user);
+      // Chamando a função de login do contexto, que agora contém toda a lógica de fetch, validação e tratamento de erro.
+      await login(email, password);
+      
+      // Se o login for bem-sucedido (e não lançar exceção), o contexto já atualizou o estado.
+      console.log("Login bem-sucedido. Redirecionando...");
       
       // Redireciona para a página principal do dashboard
       navigate({ to: "/dashboard" });
     } catch (error) {
+      // O erro já é tratado e lançado pela função de contexto.
       console.error("Falha na autenticação com o servidor:", error);
+      // Aqui você pode adicionar uma notificação de erro visual para o usuário
     } finally {
       setIsLoading(false);
     }

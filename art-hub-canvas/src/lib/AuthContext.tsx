@@ -36,45 +36,82 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, initialTok
     const [token, setToken] = useState<string | null>(initialToken);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Simulação de carregamento de token persistente ao montar o componente
-    useEffect(() => {
-        // Em um ambiente real, você leria o token de localStorage ou cookies aqui.
-        console.log("Verificando sessão de usuário...");
-        
-        // Simulação: Verifica se há um token inicial (vindo de props ou localStorage)
-        if (initialToken) {
-            setToken(initialToken);
-            setUser(initialUser);
-        } else if (typeof localStorage !== 'undefined' && localStorage.getItem('authToken')) {
-            // Se estiver rodando no browser e houver um token, carregar o usuário.
-            const storedToken = localStorage.getItem('authToken');
-            setToken(storedToken);
-            // Em um app real, aqui seria uma chamada de API para validar o token e obter o user.
-            // Por enquanto, vamos simular que o usuário é carregado com base no token.
-            console.log("Token encontrado no localStorage. Carregando dados do usuário...");
-            // setUser(fakeUserFromToken(storedToken)); 
-        }
-        
-        // Simula um pequeno atraso de rede para carregar o estado inicial
-        const timer = setTimeout(() => setIsLoading(false), 500); 
-        return () => clearTimeout(timer);
-    }, [initialToken, initialUser]);
-
     // Função de login
-    const login = (token: string, user: User) => {
-        setToken(token);
-        setUser(user);
-        localStorage.setItem('authToken', token);
+    const login = async (email: string, password: string) => {
+        // 1. Validação de parâmetros - Guard Clause
+        if (!email || typeof email !== 'string' || !password || typeof password !== 'string') {
+            console.error("Dados de login inválidos fornecidos. Email e senha devem ser strings não vazias.");
+            throw new Error("Email e senha são obrigatórios.");
+        }
+
+        setIsLoading(true);
+        try {
+            console.log("Payload enviado:", { email, password }); // Log para debug
+
+            const response = await fetch("http://localhost:8080/api/v1/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                // Corpo estritamente JSON plano: { email, password }
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) {
+                // Tenta ler o corpo da resposta como texto e lança um erro amigável
+                const errorText = await response.text();
+                let errorMessage = "Falha no login. Verifique suas credenciais ou a API.";
+                
+                try {
+                    // Se o corpo for JSON, tenta extrair a mensagem
+                    const errorData = JSON.parse(errorText);
+                    if (typeof errorData.message === 'string') {
+                        errorMessage = errorData.message;
+                    }
+                } catch (e) {
+                    // Se não for JSON, usa a mensagem padrão
+                    console.warn("Erro de resposta HTTP não JSON. Usando mensagem padrão.", e);
+                }
+                throw new Error(errorMessage);
+            }
+
+            // Sucesso (200 OK)
+            const data = await response.json();
+            
+            // Assume que o token JWT e o usuário são retornados.
+            const userFromServer = data.user as User; 
+            // ATENÇÃO: Ajustar a extração do token conforme a API real.
+            const token = data.token || "TOKEN_PLACEHOLDER_DEV"; 
+
+            // 1. Salvar no LocalStorage
+            localStorage.setItem('authToken', token);
+            localStorage.setItem('userProfile', JSON.stringify(userFromServer));
+
+            // 2. Atualizar o estado do Contexto (Eliminando a chamada recursiva)
+            setUser(userFromServer);
+            setToken(token);
+        } catch (error) {
+            console.error("Erro ao tentar fazer login:", error);
+            // Propaga o erro para ser tratado no componente de quem chamou o useAuth
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     // Função de logout
     const logout = () => {
-        setToken(null);
+        console.log("Realizando logout e limpando dados.");
+        // Limpa o estado
         setUser(null);
+        setToken(null);
+        // Limpa o localStorage
         localStorage.removeItem('authToken');
+        localStorage.removeItem('userProfile');
+        // Opcional: Redirecionar o usuário para a tela de login
+        // history.push('/login');
     };
 
-    // Força o re-render e retorna o valor do contexto
     return (
         <AuthContext.Provider value={{ user, isAuthenticated: !!token, isLoading, login, logout }}>
             {children}
