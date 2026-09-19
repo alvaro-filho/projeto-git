@@ -1,6 +1,7 @@
 package com.example.backend.models;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Objects;
 
 @Entity
@@ -20,9 +21,14 @@ public class Project {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ProjectCategory category = ProjectCategory.PESSOAL;
+
     // Relacionamento opcional com o Criador do Projeto (usuário)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id", nullable = false)
+    @JsonIgnore
     private User createdByUser;
 
     // Adicionar mais campos conforme necessário (ex: status, ownerId)
@@ -63,6 +69,14 @@ public class Project {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ProjectCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ProjectCategory category) {
+        this.category = category;
     }
 
     public User getCreatedByUser() {

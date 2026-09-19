@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 export interface User {
   id: string | number;
+  fullName?: string;
   name?: string;
   email?: string;
   [key: string]: unknown;
@@ -14,7 +15,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (username: string, email: string, password: string) => Promise<void>;
+  register: (fullName: string, username: string, email: string, password: string, role: "ARTIST" | "COMPANY") => Promise<void>;
   logout: () => void;
 }
 
@@ -122,14 +123,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     }
   };
 
-  const register = async (username: string, email: string, password: string) => {
-    if (!username.trim() || !email.trim() || !password) {
-      throw new Error("Nome de usuário, e-mail e senha são obrigatórios.");
+  const register = async (
+    fullName: string,
+    username: string,
+    email: string,
+    password: string,
+    role: "ARTIST" | "COMPANY",
+  ) => {
+    if (!fullName.trim() || !username.trim() || !email.trim() || !password || !role) {
+      throw new Error("Nome completo, usuário, e-mail, senha e perfil são obrigatórios.");
     }
 
     setIsLoading(true);
     try {
-      await requestAuth("register", { username, email, password });
+      await requestAuth("register", { fullName, username, email, password, role });
     } finally {
       setIsLoading(false);
     }

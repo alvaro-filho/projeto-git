@@ -1,0 +1,24 @@
+import { m as createFileRoute, p as lazyRouteComponent } from "../_libs/@tanstack/react-router+[...].mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/canvas-BuVYwyWt.js
+var $$splitComponentImporter = () => import("./canvas-CJEC_Twn.mjs");
+var Route = createFileRoute("/_authenticated/canvas")({
+	validateSearch: (search) => ({ task: typeof search["task"] === "string" ? search["task"] : void 0 }),
+	head: () => ({ meta: [
+		{ title: "Canvas Infinito — Ateliê Studio" },
+		{
+			name: "description",
+			content: "Moodboard infinito com notas adesivas, referências e vetores para cada tarefa do projeto."
+		},
+		{
+			property: "og:title",
+			content: "Canvas Infinito — Ateliê Studio"
+		},
+		{
+			property: "og:description",
+			content: "Colaboração visual em canvas macro do projeto ou no canvas de uma tarefa específica."
+		}
+	] }),
+	component: lazyRouteComponent($$splitComponentImporter, "component")
+});
+//#endregion
+export { Route as t };

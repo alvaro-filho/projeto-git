@@ -30,6 +30,7 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const [mode, setMode] = useState("entrar");
   const [profile, setProfile] = useState<"artista" | "empresa">("artista");
+  const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +49,7 @@ function LoginPage() {
       if (mode === "entrar") {
         await login(email, password);
       } else {
-        await register(username, email, password);
+        await register(fullName, username, email, password, profile === "artista" ? "ARTIST" : "COMPANY");
       }
 
       navigate({ to: "/dashboard", replace: true });
@@ -103,6 +104,20 @@ function LoginPage() {
         <form className="mt-5 space-y-4" onSubmit={handleLogin}>
           {mode === "cadastro" && (
             <div className="space-y-2">
+              <Label htmlFor="fullName">Nome completo</Label>
+              <Input
+                id="fullName"
+                type="text"
+                placeholder="Seu nome completo"
+                className="bg-white/5"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+              />
+            </div>
+          )}
+          {mode === "cadastro" && (
+            <div className="space-y-2">
               <Label htmlFor="username">Nome de usuário</Label>
               <Input
                 id="username"
@@ -134,6 +149,9 @@ function LoginPage() {
               type="password"
               placeholder="••••••••"
               className="bg-white/5"
+              minLength={8}
+              pattern="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}"
+              title="Use no mínimo 8 caracteres, com uma letra maiúscula, uma minúscula e um número."
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

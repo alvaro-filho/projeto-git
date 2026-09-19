@@ -27,7 +27,7 @@ public class UserService {
      * @return O usuário criado.
      * @throws RuntimeException se o username ou email já existirem.
      */
-    public User registerUser(String username, String email, String password, Role role) {
+    public User registerUser(String fullName, String username, String email, String password, Role role) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("Username já está em uso.");
         }
@@ -40,11 +40,12 @@ public class UserService {
 
         // 2. Criação da entidade
         User newUser = new User();
+        newUser.setFullName(fullName);
         newUser.setUsername(username);
         newUser.setEmail(email);
         newUser.setPasswordHash(hashedPassword);
         newUser.setRole(role);
-        newUser.setUserType("ARTIST"); // Placeholder de ajuste, assumindo que o tipo padrão é ARTIST.
+        newUser.setUserType(role.name());
 
         // 3. Persistência
         return userRepository.save(newUser);
