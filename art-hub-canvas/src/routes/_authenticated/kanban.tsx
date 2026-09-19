@@ -8,13 +8,14 @@ import { TaskDetailModal } from "@/components/kanban/TaskDetailModal";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Task } from "@/lib/atelie-data";
 
-export const Route = createFileRoute("/kanban")({
+export const Route = createFileRoute("/_authenticated/kanban")({
   head: () => ({
     meta: [
       { title: "Kanban & Cronograma — Ateliê Studio" },
       {
         name: "description",
-        content: "Organize entregáveis no quadro kanban com arrastar e soltar ou acompanhe prazos no cronograma.",
+        content:
+          "Organize entregáveis no quadro kanban com arrastar e soltar ou acompanhe prazos no cronograma.",
       },
       { property: "og:title", content: "Kanban & Cronograma — Ateliê Studio" },
       {

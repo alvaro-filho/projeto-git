@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { FolderKanban, HardDrive, Lock, PackageCheck } from "lucide-react";
 
@@ -19,7 +18,7 @@ interface Project {
 
 type HeatmapData = Record<string, number>;
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — Ateliê Studio" },
@@ -40,14 +39,6 @@ export const Route = createFileRoute("/dashboard")({
 
 function DashboardPage() {
   const { user } = useAuth();
-  const navigate = useNavigate();
-
-  // Redireciona para o login se o usuário não estiver autenticado
-  useEffect(() => {
-    if (!user) {
-      navigate({ to: "/login", replace: true });
-    }
-  }, [user, navigate]);
 
   // Fetching de Projetos (RF005)
   const { data: projects, isLoading: isLoadingProjects } = useQuery<Project[]>({
@@ -77,14 +68,6 @@ function DashboardPage() {
     enabled: Boolean(user?.id),
   });
 
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center h-screen text-muted-foreground">
-        Redirecionando para o login...
-      </div>
-    );
-  }
-
   if (isLoadingProjects || isLoadingHeatmap) {
     return (
       <AppLayout title="Dashboard" subtitle="Visão geral da produção do ateliê">
@@ -97,10 +80,7 @@ function DashboardPage() {
 
   const projectsData: Project[] = projects || [];
 
-  const totalAssetsCount = projectsData.reduce(
-    (acc: number, p: Project) => acc + p.totalAssets,
-    0
-  );
+  const totalAssetsCount = projectsData.reduce((acc: number, p: Project) => acc + p.totalAssets, 0);
 
   return (
     <AppLayout title="Dashboard" subtitle="Visão geral da produção do ateliê">
@@ -158,7 +138,9 @@ function ProjectList({ projects }: { projects: Project[] }) {
               <span className="text-xs text-muted-foreground">{project.slug}</span>
             </div>
             <p className="text-sm text-gray-500 mt-1">{project.totalAssets} assets cadastrados.</p>
-            <button className="text-xs text-primary mt-1 hover:underline">Ver Dashboard &gt;</button>
+            <button className="text-xs text-primary mt-1 hover:underline">
+              Ver Dashboard &gt;
+            </button>
           </div>
         ))}
       </div>

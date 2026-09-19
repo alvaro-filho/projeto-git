@@ -9,13 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ARTWORKS, type Artwork } from "@/lib/atelie-data";
 
-export const Route = createFileRoute("/showcase")({
+export const Route = createFileRoute("/_authenticated/showcase")({
   head: () => ({
     meta: [
       { title: "Vitrine & NDA — Ateliê Studio" },
       {
         name: "description",
-        content: "Galeria de artes com controle de NDA: aprove a liberação e publique no portfólio em um clique.",
+        content:
+          "Galeria de artes com controle de NDA: aprove a liberação e publique no portfólio em um clique.",
       },
       { property: "og:title", content: "Vitrine & NDA — Ateliê Studio" },
       {
@@ -49,7 +50,10 @@ function ShowcasePage() {
             <TabsTrigger value="liberadas">Liberadas</TabsTrigger>
           </TabsList>
         </Tabs>
-        <Button className="gradient-primary text-primary-foreground" onClick={() => setArtbookOpen(true)}>
+        <Button
+          className="gradient-primary text-primary-foreground"
+          onClick={() => setArtbookOpen(true)}
+        >
           <BookOpen className="size-4" />
           Artbook Digital Exclusivo
         </Button>

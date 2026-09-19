@@ -30,30 +30,30 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const [mode, setMode] = useState("entrar");
   const [profile, setProfile] = useState<"artista" | "empresa">("artista");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { login } = useAuth();
+  const { login, register } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
+    setErrorMessage(null);
 
     try {
-      // Chamando a função de login do contexto, que agora contém toda a lógica de fetch, validação e tratamento de erro.
-      await login(email, password);
-      
-      // Se o login for bem-sucedido (e não lançar exceção), o contexto já atualizou o estado.
-      console.log("Login bem-sucedido. Redirecionando...");
-      
-      // Redireciona para a página principal do dashboard
-      navigate({ to: "/dashboard" });
+      if (mode === "entrar") {
+        await login(email, password);
+      } else {
+        await register(username, email, password);
+      }
+
+      navigate({ to: "/dashboard", replace: true });
     } catch (error) {
-      // O erro já é tratado e lançado pela função de contexto.
-      console.error("Falha na autenticação com o servidor:", error);
-      // Aqui você pode adicionar uma notificação de erro visual para o usuário
+      setErrorMessage(error instanceof Error ? error.message : "Não foi possível concluir a operação.");
     } finally {
       setIsLoading(false);
     }
@@ -101,6 +101,20 @@ function LoginPage() {
         </div>
 
         <form className="mt-5 space-y-4" onSubmit={handleLogin}>
+          {mode === "cadastro" && (
+            <div className="space-y-2">
+              <Label htmlFor="username">Nome de usuário</Label>
+              <Input
+                id="username"
+                type="text"
+                placeholder="seu_usuario"
+                className="bg-white/5"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
             <Input
@@ -136,6 +150,7 @@ function LoginPage() {
               ? "Entrar no ateliê"
               : "Criar cadastro"}
           </Button>
+          {errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
         </form>
 
         <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
