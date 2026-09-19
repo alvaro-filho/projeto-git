@@ -1,14 +1,10 @@
 package com.example.backend.models;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "app_user") // Renomeando a tabela para evitar conflito com palavras reservadas
+@Table(name = "app_user")
 public class User {
 
     @Id
@@ -18,8 +14,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false)
-    private String password;
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
 
     @Column(nullable = false)
     private String email;
@@ -28,16 +24,15 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
+    private String userType;
+
     private LocalDateTime createdAt;
 
-    // Getters e Setters (pular para brevidade)
-    // ...
-
     public User() {
-        // Construtor padrão JPA
     }
 
-    // Getters e Setters de exemplo (devem ser adicionados manualmente ou com Lombok)
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -54,13 +49,23 @@ public class User {
         this.username = username;
     }
 
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    // --- Métodos Auxiliares para Compatibilidade ---
     public String getPassword() {
-        return password;
+        return passwordHash;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.passwordHash = password;
     }
+    // ----------------------------------------------
 
     public String getEmail() {
         return email;
@@ -76,6 +81,14 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 
     public LocalDateTime getCreatedAt() {

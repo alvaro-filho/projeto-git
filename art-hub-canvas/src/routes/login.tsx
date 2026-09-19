@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Building2, Chrome, Palette, Sparkles, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/lib/AuthContext";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -29,6 +30,34 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const [mode, setMode] = useState("entrar");
   const [profile, setProfile] = useState<"artista" | "empresa">("artista");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // Chamando a função de login do contexto, que agora contém toda a lógica de fetch, validação e tratamento de erro.
+      await login(email, password);
+      
+      // Se o login for bem-sucedido (e não lançar exceção), o contexto já atualizou o estado.
+      console.log("Login bem-sucedido. Redirecionando...");
+      
+      // Redireciona para a página principal do dashboard
+      navigate({ to: "/dashboard" });
+    } catch (error) {
+      // O erro já é tratado e lançado pela função de contexto.
+      console.error("Falha na autenticação com o servidor:", error);
+      // Aqui você pode adicionar uma notificação de erro visual para o usuário
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background p-4">
@@ -71,17 +100,41 @@ function LoginPage() {
           </div>
         </div>
 
-        <form className="mt-5 space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="mt-5 space-y-4" onSubmit={handleLogin}>
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
-            <Input id="email" type="email" placeholder="voce@atelie.com" className="bg-white/5" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="voce@atelie.com"
+              className="bg-white/5"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="senha">Senha</Label>
-            <Input id="senha" type="password" placeholder="••••••••" className="bg-white/5" />
+            <Input
+              id="senha"
+              type="password"
+              placeholder="••••••••"
+              className="bg-white/5"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
-          <Button asChild className="gradient-primary w-full text-primary-foreground">
-            <Link to="/dashboard">{mode === "entrar" ? "Entrar no ateliê" : "Criar cadastro"}</Link>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="gradient-primary w-full text-primary-foreground"
+          >
+            {isLoading
+              ? "Autenticando..."
+              : mode === "entrar"
+              ? "Entrar no ateliê"
+              : "Criar cadastro"}
           </Button>
         </form>
 
