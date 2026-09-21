@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/lib/AuthContext";
 
+// Animation timing constants
+const ANIMATION_DURATION = 300;
+const ANIMATION_EASING = "ease-out";
+
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
@@ -102,7 +106,15 @@ function LoginPage() {
         </div>
 
         <form className="mt-5 space-y-4" onSubmit={handleLogin}>
-          {mode === "cadastro" && (
+          <div
+            className="space-y-4 overflow-hidden transition-all duration-300 ease-out"
+            style={{
+              maxHeight: mode === "cadastro" ? "320px" : "0px",
+              opacity: mode === "cadastro" ? 1 : 0,
+              visibility: mode === "cadastro" ? "visible" : "hidden",
+              transform: mode === "cadastro" ? "translateY(0)" : "translateY(-8px)",
+            }}
+          >
             <div className="space-y-2">
               <Label htmlFor="fullName">Nome completo</Label>
               <Input
@@ -115,8 +127,6 @@ function LoginPage() {
                 required
               />
             </div>
-          )}
-          {mode === "cadastro" && (
             <div className="space-y-2">
               <Label htmlFor="username">Nome de usuário</Label>
               <Input
@@ -129,7 +139,7 @@ function LoginPage() {
                 required
               />
             </div>
-          )}
+          </div>
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
             <Input
