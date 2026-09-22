@@ -10,30 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CanvasRouteImport } from './routes/canvas'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as KanbanRouteImport } from './routes/kanban'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as ShowcaseRouteImport } from './routes/showcase'
+import { Route as AuthenticatedCanvasRouteImport } from './routes/_authenticated/canvas'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedKanbanRouteImport } from './routes/_authenticated/kanban'
+import { Route as AuthenticatedShowcaseRouteImport } from './routes/_authenticated/showcase'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CanvasRoute = CanvasRouteImport.update({
-  id: '/canvas',
-  path: '/canvas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const KanbanRoute = KanbanRouteImport.update({
-  id: '/kanban',
-  path: '/kanban',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -41,59 +31,73 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ShowcaseRoute = ShowcaseRouteImport.update({
+const AuthenticatedCanvasRoute = AuthenticatedCanvasRouteImport.update({
+  id: '/canvas',
+  path: '/canvas',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedKanbanRoute = AuthenticatedKanbanRouteImport.update({
+  id: '/kanban',
+  path: '/kanban',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedShowcaseRoute = AuthenticatedShowcaseRouteImport.update({
   id: '/showcase',
   path: '/showcase',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/canvas': typeof CanvasRoute
-  '/dashboard': typeof DashboardRoute
-  '/kanban': typeof KanbanRoute
   '/login': typeof LoginRoute
-  '/showcase': typeof ShowcaseRoute
+  '/canvas': typeof AuthenticatedCanvasRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/kanban': typeof AuthenticatedKanbanRoute
+  '/showcase': typeof AuthenticatedShowcaseRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/canvas': typeof CanvasRoute
-  '/dashboard': typeof DashboardRoute
-  '/kanban': typeof KanbanRoute
   '/login': typeof LoginRoute
-  '/showcase': typeof ShowcaseRoute
+  '/canvas': typeof AuthenticatedCanvasRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/kanban': typeof AuthenticatedKanbanRoute
+  '/showcase': typeof AuthenticatedShowcaseRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/canvas': typeof CanvasRoute
-  '/dashboard': typeof DashboardRoute
-  '/kanban': typeof KanbanRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
-  '/showcase': typeof ShowcaseRoute
+  '/_authenticated/canvas': typeof AuthenticatedCanvasRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/kanban': typeof AuthenticatedKanbanRoute
+  '/_authenticated/showcase': typeof AuthenticatedShowcaseRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/canvas' | '/dashboard' | '/kanban' | '/login' | '/showcase'
+  fullPaths: '/' | '/login' | '/canvas' | '/dashboard' | '/kanban' | '/showcase'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/canvas' | '/dashboard' | '/kanban' | '/login' | '/showcase'
+  to: '/' | '/login' | '/canvas' | '/dashboard' | '/kanban' | '/showcase'
   id:
     | '__root__'
     | '/'
-    | '/canvas'
-    | '/dashboard'
-    | '/kanban'
+    | '/_authenticated'
     | '/login'
-    | '/showcase'
+    | '/_authenticated/canvas'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/kanban'
+    | '/_authenticated/showcase'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CanvasRoute: typeof CanvasRoute
-  DashboardRoute: typeof DashboardRoute
-  KanbanRoute: typeof KanbanRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
-  ShowcaseRoute: typeof ShowcaseRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -105,25 +109,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/canvas': {
-      id: '/canvas'
-      path: '/canvas'
-      fullPath: '/canvas'
-      preLoaderRoute: typeof CanvasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/kanban': {
-      id: '/kanban'
-      path: '/kanban'
-      fullPath: '/kanban'
-      preLoaderRoute: typeof KanbanRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -133,23 +123,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/showcase': {
-      id: '/showcase'
+    '/_authenticated/canvas': {
+      id: '/_authenticated/canvas'
+      path: '/canvas'
+      fullPath: '/canvas'
+      preLoaderRoute: typeof AuthenticatedCanvasRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/kanban': {
+      id: '/_authenticated/kanban'
+      path: '/kanban'
+      fullPath: '/kanban'
+      preLoaderRoute: typeof AuthenticatedKanbanRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/showcase': {
+      id: '/_authenticated/showcase'
       path: '/showcase'
       fullPath: '/showcase'
-      preLoaderRoute: typeof ShowcaseRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedShowcaseRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedCanvasRoute: typeof AuthenticatedCanvasRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedKanbanRoute: typeof AuthenticatedKanbanRoute
+  AuthenticatedShowcaseRoute: typeof AuthenticatedShowcaseRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedCanvasRoute: AuthenticatedCanvasRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedKanbanRoute: AuthenticatedKanbanRoute,
+  AuthenticatedShowcaseRoute: AuthenticatedShowcaseRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CanvasRoute: CanvasRoute,
-  DashboardRoute: DashboardRoute,
-  KanbanRoute: KanbanRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
-  ShowcaseRoute: ShowcaseRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

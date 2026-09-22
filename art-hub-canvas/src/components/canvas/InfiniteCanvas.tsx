@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { Hand, Image as ImageIcon, Minus, Plus, PenTool, StickyNote } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { logActivity } from "@/lib/activity-api";
 
 type Item = {
   id: string;
@@ -52,6 +53,7 @@ export function InfiniteCanvas({ contextLabel }: { contextLabel: string }) {
 
   const addItem = (type: Item["type"]) => {
     setTool(type);
+    logActivity("CANVAS_EDIT");
     setItems((prev) => [
       ...prev,
       {

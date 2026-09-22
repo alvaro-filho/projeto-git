@@ -3,14 +3,20 @@ import { CalendarClock, GripVertical } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { COLUMNS, TASKS, type Task, type TaskStatus } from "@/lib/atelie-data";
+import { logActivity } from "@/lib/activity-api";
 
 export function KanbanBoard({ onOpenTask }: { onOpenTask: (task: Task) => void }) {
   const [tasks, setTasks] = useState<Task[]>(TASKS);
   const [dragging, setDragging] = useState<string | null>(null);
   const [overColumn, setOverColumn] = useState<TaskStatus | null>(null);
 
-  const move = (id: string, status: TaskStatus) =>
+  const move = (id: string, status: TaskStatus) => {
+    const task = tasks.find((item) => item.id === id);
+    if (status === "done" && task?.status !== "done") {
+      logActivity("TASK_COMPLETED");
+    }
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status } : t)));
+  };
 
   return (
     <div className="grid gap-4 lg:grid-cols-4">

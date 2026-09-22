@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Building2, Chrome, Palette, Sparkles, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/lib/AuthContext";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -29,6 +30,35 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const [mode, setMode] = useState("entrar");
   const [profile, setProfile] = useState<"artista" | "empresa">("artista");
+  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const { login, register } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      if (mode === "entrar") {
+        await login(email, password);
+      } else {
+        await register(fullName, username, email, password, profile === "artista" ? "ARTIST" : "COMPANY");
+      }
+
+      navigate({ to: "/dashboard", replace: true });
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Não foi possível concluir a operação.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background p-4">
@@ -71,18 +101,74 @@ function LoginPage() {
           </div>
         </div>
 
-        <form className="mt-5 space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="mt-5 space-y-4" onSubmit={handleLogin}>
+          {mode === "cadastro" && (
+            <div className="space-y-2">
+              <Label htmlFor="fullName">Nome completo</Label>
+              <Input
+                id="fullName"
+                type="text"
+                placeholder="Seu nome completo"
+                className="bg-white/5"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+              />
+            </div>
+          )}
+          {mode === "cadastro" && (
+            <div className="space-y-2">
+              <Label htmlFor="username">Nome de usuário</Label>
+              <Input
+                id="username"
+                type="text"
+                placeholder="seu_usuario"
+                className="bg-white/5"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
-            <Input id="email" type="email" placeholder="voce@atelie.com" className="bg-white/5" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="voce@atelie.com"
+              className="bg-white/5"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="senha">Senha</Label>
-            <Input id="senha" type="password" placeholder="••••••••" className="bg-white/5" />
+            <Input
+              id="senha"
+              type="password"
+              placeholder="••••••••"
+              className="bg-white/5"
+              minLength={8}
+              pattern="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}"
+              title="Use no mínimo 8 caracteres, com uma letra maiúscula, uma minúscula e um número."
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
-          <Button asChild className="gradient-primary w-full text-primary-foreground">
-            <Link to="/dashboard">{mode === "entrar" ? "Entrar no ateliê" : "Criar cadastro"}</Link>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="gradient-primary w-full text-primary-foreground"
+          >
+            {isLoading
+              ? "Autenticando..."
+              : mode === "entrar"
+              ? "Entrar no ateliê"
+              : "Criar cadastro"}
           </Button>
+          {errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
         </form>
 
         <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">

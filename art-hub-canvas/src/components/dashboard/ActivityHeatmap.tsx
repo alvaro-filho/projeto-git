@@ -5,21 +5,35 @@ const DAYS = 7;
 const LABELS = ["Abr", "Mai", "Jun", "Jul", "Ago", "Set"];
 
 function levelColor(level: number) {
-  const opacity = [0.06, 0.25, 0.45, 0.7, 1][level];
+  const opacity = [0.06, 0.25, 0.45, 0.7, 1][level] ?? 0.06;
   return `color-mix(in oklab, var(--primary) ${opacity * 100}%, transparent)`;
 }
 
-export function ActivityHeatmap() {
+function dateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function ActivityHeatmap({ data }: { data: Record<string, number> }) {
   const cells = useMemo(() => {
-    const out: number[] = [];
-    let seed = 7;
-    for (let i = 0; i < WEEKS * DAYS; i++) {
-      seed = (seed * 9301 + 49297) % 233280;
-      const r = seed / 233280;
-      out.push(r > 0.82 ? 4 : r > 0.66 ? 3 : r > 0.45 ? 2 : r > 0.25 ? 1 : 0);
+    const counts = Object.values(data);
+    const maxCount = Math.max(0, ...counts);
+    const end = new Date();
+    const out: Array<{ level: number; count: number; date: string }> = [];
+
+    for (let index = 0; index < WEEKS * DAYS; index += 1) {
+      const date = new Date(end);
+      date.setDate(end.getDate() - (WEEKS * DAYS - 1 - index));
+      const key = dateKey(date);
+      const count = data[key] ?? 0;
+      const level = maxCount === 0 ? 0 : Math.min(4, Math.ceil((count / maxCount) * 4));
+      out.push({ level, count, date: key });
     }
+
     return out;
-  }, []);
+  }, [data]);
 
   return (
     <div className="glass rounded-2xl p-5">
@@ -42,13 +56,13 @@ export function ActivityHeatmap() {
           {Array.from({ length: WEEKS }).map((_, w) => (
             <div key={w} className="flex flex-col gap-1">
               {Array.from({ length: DAYS }).map((_, d) => {
-                const level = cells[w * DAYS + d];
+                const cell = cells[w * DAYS + d] ?? { level: 0, count: 0, date: "" };
                 return (
                   <span
                     key={d}
-                    title={`${level * 3} entregas`}
+                    title={`${cell.count} atividades em ${cell.date}`}
                     className="size-3 rounded-sm transition-transform hover:scale-125"
-                    style={{ background: levelColor(level) }}
+                    style={{ background: levelColor(cell.level) }}
                   />
                 );
               })}

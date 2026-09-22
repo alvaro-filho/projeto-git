@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, KanbanSquare, Frame, GalleryVerticalEnd, Palette, LogOut } from "lucide-react";
 
 import {
@@ -15,6 +15,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/lib/AuthContext";
 
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -25,8 +26,15 @@ const items = [
 
 export function AppSidebar() {
   const { state } = useSidebar();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+
+  const handleLogout = () => {
+    logout();
+    navigate({ to: "/login", replace: true });
+  };
 
   return (
     <Sidebar collapsible="icon" className="border-sidebar-border">
@@ -76,9 +84,14 @@ export function AppSidebar() {
             </div>
           )}
           {!collapsed && (
-            <Link to="/login" aria-label="Sair" className="text-muted-foreground hover:text-foreground">
+            <button
+              type="button"
+              onClick={handleLogout}
+              aria-label="Sair"
+              className="text-muted-foreground hover:text-foreground"
+            >
               <LogOut className="size-4" />
-            </Link>
+            </button>
           )}
         </div>
       </SidebarFooter>
