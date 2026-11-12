@@ -13,21 +13,23 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { TASKS } from "@/lib/atelie-data";
 
-export const Route = createFileRoute("/canvas")({
+export const Route = createFileRoute("/_authenticated/canvas")({
   validateSearch: (search: Record<string, unknown>) => ({
-    task: typeof search.task === "string" ? search.task : undefined,
+    task: typeof search["task"] === "string" ? search["task"] : undefined,
   }),
   head: () => ({
     meta: [
       { title: "Canvas Infinito — Ateliê Studio" },
       {
         name: "description",
-        content: "Moodboard infinito com notas adesivas, referências e vetores para cada tarefa do projeto.",
+        content:
+          "Moodboard infinito com notas adesivas, referências e vetores para cada tarefa do projeto.",
       },
       { property: "og:title", content: "Canvas Infinito — Ateliê Studio" },
       {
         property: "og:description",
-        content: "Colaboração visual em canvas macro do projeto ou no canvas de uma tarefa específica.",
+        content:
+          "Colaboração visual em canvas macro do projeto ou no canvas de uma tarefa específica.",
       },
     ],
   }),
@@ -40,7 +42,9 @@ function CanvasPage() {
   const [value, setValue] = useState<string>(task ?? "macro");
 
   const selected = TASKS.find((t) => t.id === value);
-  const label = selected ? `Canvas da Tarefa: ${selected.title}` : "Canvas Macro do Projeto (Moodboard Geral)";
+  const label = selected
+    ? `Canvas da Tarefa: ${selected.title}`
+    : "Canvas Macro do Projeto (Moodboard Geral)";
 
   return (
     <AppLayout title="Canvas Infinito" subtitle="Colaboração visual em tempo real">

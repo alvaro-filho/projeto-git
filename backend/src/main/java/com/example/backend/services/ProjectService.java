@@ -34,6 +34,11 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public List<Project> findProjectsForUser(User user) {
+        return projectRepository.findByCreatedByUser(user);
+    }
+
     /**
      * Busca um projeto específico pelo seu ID.
      * @param projectId O ID do projeto.

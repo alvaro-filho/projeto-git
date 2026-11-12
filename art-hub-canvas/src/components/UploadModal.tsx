@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { logActivity } from "@/lib/activity-api";
 
 const FILES = [
   { name: "cidade_flutuante_v07.psd", size: "2.4 GB" },
@@ -34,6 +35,7 @@ export function UploadModal({
         if (p >= 100) {
           clearInterval(id);
           setUploading(false);
+          logActivity("FILE_UPLOAD");
           return 100;
         }
         return Math.min(100, p + 7);

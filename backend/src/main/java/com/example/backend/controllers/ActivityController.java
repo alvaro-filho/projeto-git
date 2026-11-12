@@ -1,37 +1,58 @@
 package com.example.backend.controllers;
 
-import com.example.backend.services.ActivityService;
-import org.springframework.http.HttpStatus;
+import com.example.backend.dto.ActivityEventRequest;
+import com.example.backend.dto.HeatmapDTO;
+import com.example.backend.dto.DeliveryTrendDTO;
+import com.example.backend.models.User;
+import com.example.backend.repositories.UserRepository;
+import com.example.backend.services.ActivityEventService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/activity")
 public class ActivityController {
 
-    private final ActivityService activityService;
+    private final ActivityEventService activityEventService;
+    private final UserRepository userRepository;
 
-    public ActivityController(ActivityService activityService) {
-        this.activityService = activityService;
+    public ActivityController(
+            ActivityEventService activityEventService,
+            UserRepository userRepository
+    ) {
+        this.activityEventService = activityEventService;
+        this.userRepository = userRepository;
     }
 
-    /**
-     * Endpoint para gerar o mapa de calor de atividades de um usuário específico (RF002).
-     * Exemplo de uso: GET /api/v1/activity/heatmap?userId={id}&startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
-     */
+    @PostMapping
+    public ResponseEntity<Map<String, String>> logActivity(
+            @Valid @RequestBody ActivityEventRequest request,
+            Authentication authentication
+    ) {
+        User user = findAuthenticatedUser(authentication);
+        activityEventService.logEvent(user, request.type(), request.projectId());
+        return ResponseEntity.status(201).body(Map.of("message", "Atividade registrada."));
+    }
+
     @GetMapping("/heatmap")
-    public ResponseEntity<Map<String, Integer>> getActivityHeatmap(
-            @RequestParam Long userId,
-            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate startDate,
-            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate endDate) {
-        
-        if (startDate == null) startDate = java.time.LocalDate.now().minusYears(1);
-        if (endDate == null) endDate = java.time.LocalDate.now();
-        
-        Map<String, Integer> heatmap = activityService.getActivityHeatmap(userId, startDate, endDate);
-        return ResponseEntity.ok(heatmap);
+    public ResponseEntity<List<HeatmapDTO>> getHeatmap(Authentication authentication) {
+        User user = findAuthenticatedUser(authentication);
+        return ResponseEntity.ok(activityEventService.getHeatmap(user.getId()));
+    }
+
+    @GetMapping("/delivery-trend")
+    public ResponseEntity<List<DeliveryTrendDTO>> getDeliveryTrend(Authentication authentication) {
+        User user = findAuthenticatedUser(authentication);
+        return ResponseEntity.ok(activityEventService.getDeliveryTrend(user.getId()));
+    }
+
+    private User findAuthenticatedUser(Authentication authentication) {
+        return userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException("Usuário autenticado não encontrado."));
     }
 }

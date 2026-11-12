@@ -2,8 +2,12 @@ package com.example.backend.controllers;
 
 import com.example.backend.models.Project;
 import com.example.backend.services.ProjectService;
+import com.example.backend.repositories.UserRepository;
+import com.example.backend.models.User;
+import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +19,11 @@ import java.util.Optional;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final UserRepository userRepository;
 
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(ProjectService projectService, UserRepository userRepository) {
         this.projectService = projectService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -26,8 +32,10 @@ public class ProjectController {
      * @return ResponseEntity contendo a lista de projetos.
      */
     @GetMapping
-    public ResponseEntity<List<Project>> getAllProjects() {
-        List<Project> projects = projectService.findAllProjects();
+    public ResponseEntity<List<Project>> getAllProjects(Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException("Usuário autenticado não encontrado."));
+        List<Project> projects = projectService.findProjectsForUser(user);
         return ResponseEntity.ok(projects);
     }
 
@@ -52,6 +60,7 @@ public class ProjectController {
      * @return ResponseEntity com o projeto criado.
      */
     @PostMapping
+    @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<Project> createProject(
             @RequestBody Project projectDetails,
             @RequestHeader("X-User-Id") Long currentUser) {

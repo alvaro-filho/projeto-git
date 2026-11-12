@@ -26,6 +26,8 @@ export function GanttView() {
 
         {TASKS.map((task, i) => {
           const bar = BARS[i % BARS.length];
+          if (!bar) return null;
+
           return (
             <div
               key={task.id}

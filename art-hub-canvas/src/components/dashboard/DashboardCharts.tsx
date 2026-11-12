@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { DELIVERY_TREND, FILES_BY_CLIENT } from "@/lib/atelie-data";
+import { FILES_BY_CLIENT } from "@/lib/atelie-data";
 
 const tooltipStyle = {
   background: "var(--popover)",
@@ -20,14 +20,20 @@ const tooltipStyle = {
   fontSize: "12px",
 };
 
-export function DeliveryTrendChart() {
+export interface DeliveryTrendData {
+  mes: string;
+  entregas: number;
+  revisoes: number;
+}
+
+export function DeliveryTrendChart({ data }: { data: DeliveryTrendData[] }) {
   return (
     <div className="glass rounded-2xl p-5">
       <h2 className="text-sm font-semibold">Tendência de entregas</h2>
       <p className="text-xs text-muted-foreground">Entregas finalizadas x rodadas de revisão</p>
       <div className="mt-4 h-60">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={DELIVERY_TREND}>
+          <AreaChart data={data}>
             <defs>
               <linearGradient id="gEntregas" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.6} />

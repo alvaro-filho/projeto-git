@@ -4,15 +4,24 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -29,8 +38,11 @@ public class SecurityConfig {
             .cors(cors -> {
                 cors.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    // Adiciona as origens permitidas (incluindo http://localhost:8081)
-                    configuration.setAllowedOrigins(java.util.Arrays.asList("http://localhost:5173", "http://localhost:3000", "http://localhost:8081"));
+                        // Permite as portas locais usadas pelo Vite durante o desenvolvimento.
+                        configuration.setAllowedOriginPatterns(java.util.Arrays.asList(
+                            "http://localhost:[*]",
+                            "http://127.0.0.1:[*]"
+                        ));
                     // Permite todos os métodos e headers
                     configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
@@ -47,6 +59,8 @@ public class SecurityConfig {
                     // Todas as outras requisições exigem autenticação
                     .anyRequest().authenticated()
             )
+
+                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             
             // 4. Define a política de sessão como stateless
             .sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS));
