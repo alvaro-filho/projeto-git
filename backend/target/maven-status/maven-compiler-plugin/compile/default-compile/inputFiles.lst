@@ -12,13 +12,16 @@ C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\K
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\models\Role.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\services\JwtService.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\models\User.java
+C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\models\TaskPriority.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\repositories\UserRepository.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\config\SecurityConfig.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\repositories\ProjectRepository.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\models\ActivityCommits.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\config\DataLoader.java
+C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\models\Task.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\dto\DeliveryTrendDTO.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\dto\HeatmapDTO.java
+C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\models\TaskStatus.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\config\JwtAuthenticationFilter.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\controllers\ValidationExceptionHandler.java
 C:\Users\Usuario\Documents\area de trabalho do vs studio\projetos\novo projeto\KC\projeto-git\backend\src\main\java\com\example\backend\dto\UserDto.java
